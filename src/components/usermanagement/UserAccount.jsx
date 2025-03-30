@@ -1,13 +1,32 @@
 // src/components/usermanagement/UserAccount.jsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { supabase } from '../../supabase/supabaseClient';
 import { Mail } from 'lucide-react';
 
 const UserAccount = () => {
-  const [user, setUser] = useState(supabase.auth.user());
+  const [user, setUser] = useState(null);
+  
+  useEffect(() => {
+    // Try to get user but handle potential errors when Supabase isn't properly initialized
+    try {
+      // With the newer Supabase JavaScript client, use getUser instead of user()
+      const getUser = async () => {
+        const { data } = await supabase.auth.getUser();
+        setUser(data?.user);
+      };
+      
+      getUser();
+    } catch (error) {
+      console.warn("Unable to get user:", error);
+    }
+  }, []);
 
   const handleSignOut = async () => {
-    await supabase.auth.signOut();
+    try {
+      await supabase.auth.signOut();
+    } catch (error) {
+      console.warn("Sign out failed:", error);
+    }
     setUser(null);
   };
 
@@ -30,7 +49,7 @@ const UserAccount = () => {
     );
   }
 
-  // If no user is present, simply return null (the Auth component will be rendered by SidePanel)
+  // If no user is present, return null
   return null;
 };
 

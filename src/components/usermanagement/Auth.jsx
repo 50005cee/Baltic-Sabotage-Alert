@@ -6,36 +6,56 @@ export default function Auth({ onAuthChange }) {
   const [session, setSession] = useState(null);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      onAuthChange(session);
-    });
+    // Get session and set up auth state change listener
+    try {
+      supabase.auth.getSession().then(({ data: { session } }) => {
+        setSession(session);
+        onAuthChange(session);
+      });
 
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-      onAuthChange(session);
-    });
+      const {
+        data: { subscription },
+      } = supabase.auth.onAuthStateChange((_event, session) => {
+        setSession(session);
+        onAuthChange(session);
+      });
 
-    return () => subscription.unsubscribe();
+      return () => {
+        if (subscription && subscription.unsubscribe) {
+          subscription.unsubscribe();
+        }
+      };
+    } catch (error) {
+      console.warn("Auth state tracking disabled:", error);
+      onAuthChange(null);
+    }
   }, [onAuthChange]);
 
   const handleLogin = () => {
     console.log('Login clicked');
+    // For GitHub Pages deployment, this is just a placeholder
+    alert("Authentication is disabled in this demo");
   };
 
   const handleSignUp = () => {
     console.log('Sign up clicked');
+    // For GitHub Pages deployment, this is just a placeholder
+    alert("Authentication is disabled in this demo");
   };
 
   const handleLogout = async () => {
     try {
       setLoading(true);
-      const { error } = await supabase.auth.signOut();
-      if (error) throw error;
+      try {
+        const { error } = await supabase.auth.signOut();
+        if (error) throw error;
+      } catch (error) {
+        console.warn("Sign out failed, resetting session state locally");
+        setSession(null);
+        onAuthChange(null);
+      }
     } catch (error) {
-      alert(error.error_description || error.message);
+      console.error(error.message);
     } finally {
       setLoading(false);
     }

@@ -94,19 +94,27 @@ function App() {
 
   // Listen for Supabase auth state changes using the new API
   useEffect(() => {
-    // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-    });
+    // Get initial session - handle potential errors
+    try {
+      supabase.auth.getSession().then(({ data: { session } }) => {
+        setSession(session);
+      });
 
-    // Listen for auth changes
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-    });
+      // Listen for auth changes
+      const {
+        data: { subscription },
+      } = supabase.auth.onAuthStateChange((_event, session) => {
+        setSession(session);
+      });
 
-    return () => subscription.unsubscribe();
+      return () => {
+        if (subscription && subscription.unsubscribe) {
+          subscription.unsubscribe();
+        }
+      };
+    } catch (error) {
+      console.warn("Auth state tracking disabled:", error);
+    }
   }, []);
 
   // Helper function to find layer name by its ID (for tracking purposes)
