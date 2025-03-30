@@ -1,0 +1,398 @@
+html, body, #root {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.app {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  position: relative;
+}
+
+.map-container {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+}
+
+.sidepanel {
+  height: 100%;
+  background: rgba(34, 0, 67, 0.768);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  border-right: 1px solid rgba(229, 231, 235, 0.2);
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 30;
+  box-shadow: 
+    0 8px 32px 0 rgba(31, 38, 135, 0.37),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+.sidepanel:hover {
+  background: rgba(34, 0, 67, 0.616);
+  box-shadow: 
+    0 8px 32px 0 rgba(31, 38, 135, 0.45),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+}
+
+.sidepanel.expanded {
+  width: 300px;
+}
+
+/* When the panel is expanded, fade out the icons */
+.sidepanel.expanded .sidepanel-icons {
+  opacity: 0;
+}
+
+/* Individual icons styling */
+.sidepanel-icons .icon {
+  width: 24px;
+  height: 24px;
+  color: #ffffff;
+  transition: background-color 0.3s;
+  padding: 0.3rem;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+/* Accent hover effect on icons */
+.sidepanel-icons .icon:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.sidepanel.minimized {
+  width: 50px;
+  overflow: visible;  /* Allow overflow so that the toggle button isn't clipped */
+}
+
+.sidepanel.minimized .sidepanel-content {
+  display: none; /* Hides the sidepanel content completely */
+}
+
+.sidepanel-content {
+  gap: 0.5rem;
+}
+
+.sidepanel-content hr {
+  margin: 0.3rem 0;
+}
+
+.sidepanel-account {
+  padding-top: 0.3rem;
+}
+
+/* Sidepanel icons container: visible in minimized state, stacked vertically */
+.sidepanel-icons {
+  position: absolute;
+  bottom: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  opacity: 1;
+  transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: auto;
+}
+
+
+/* Updated Toggle Button styles to better fit the project theme */
+.toggle-button {
+  background-color: rgba(34, 0, 67, 0.85); /* A dark purple similar to the sidepanel */
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  cursor: pointer;
+  padding: 0.5rem;  /* Increased padding for a more balanced look */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  color: #fff;      /* White arrow icon */
+  font-size: 16px;  /* Adjust as needed */
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+/* On hover, darken the background and add a slight scale effect */
+.toggle-button:hover {
+  background-color: rgba(34, 0, 67, 1);
+  transform: scale(1.05);
+}
+
+/* Define a spin animation */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Apply the spin animation to any element with the loading class */
+.loading {
+  animation: spin 0.3s linear infinite;
+}
+
+.sidepanel-content {
+  padding: 1rem;
+  overflow-y: auto;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  box-sizing: border-box;
+}
+
+.sidepanel-content hr {
+  margin: 0.3rem 0;
+}
+
+.minimized .sidepanel-content {
+  display: none;
+}
+
+.relative {
+  position: relative;
+}
+
+.absolute {
+  position: absolute;
+}
+
+.z-10 {
+  z-index: 20;
+}
+
+.top-4 {
+  top: 1rem;
+}
+
+.right-4 {
+  right: 1rem;
+}
+
+.bottom-12 {
+  bottom: 3rem;
+}
+
+.w-full {
+  width: 100%;
+}
+
+.h-full {
+  height: 100%;
+}
+
+.basemap-toggle-container {
+  background: rgba(34, 0, 67, 0.768);
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0);
+  width: 120px;
+  position: relative;
+}
+
+.basemap-toggle {
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 8px;
+  background: rgba(34, 0, 67, 0.768);
+}
+
+.current-basemap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.basemap-list {
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  right: 0;
+  background: rgba(34, 0, 67, 0.768);
+  border-radius: 8px;
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.15);
+  margin-bottom: 8px;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 20;
+}
+
+.basemap-option {
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  transition: background-color 0.2s;
+}
+
+.basemap-option:hover {
+  background: rgba(175, 154, 197, 0.768);
+}
+
+.basemap-option.active {
+  background: rgba(111, 77, 145, 0.768);
+}
+
+.preview-image {
+  width: 100px;
+  height: 60px;
+  border-radius: 4px;
+  object-fit: cover;
+  border: 1px solid #e5e7eb00;
+}
+
+.basemap-name {
+  font-size: 12px;
+  color: #ffffff;
+  text-align: center;
+  font-weight: 500;
+}
+
+.vessel-popup {
+  background: rgba(34, 0, 67, 0.95);
+  border-radius: 8px;
+  color: white;
+  min-width: 200px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 
+    0 8px 32px 0 rgba(31, 38, 135, 0.37),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+.vessel-popup-header {
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.vessel-popup-header h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.vessel-popup-content {
+  padding: 12px 16px;
+}
+
+.vessel-popup-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 0;
+}
+
+.vessel-popup-label {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 14px;
+}
+
+.vessel-popup-value {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* MapLibre popup modifications */
+.maplibregl-popup-content {
+  padding: 0 !important;
+  background: none !important;
+  border-radius: 8px !important;
+  box-shadow: none !important;
+}
+
+.maplibregl-popup-tip {
+  border-top-color: rgba(34, 0, 67, 0.95) !important;
+}
+
+/* src/App.css */
+
+/* Common Popup Styles */
+.cable-popup,
+.pipeline-popup,
+.submarine-cable-popup {
+  background: rgba(34, 0, 67, 0.95);
+  border-radius: 8px;
+  color: white;
+  min-width: 200px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 
+    0 8px 32px 0 rgba(31, 38, 135, 0.37),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+.cable-popup-header,
+.pipeline-popup-header,
+.submarine-cable-popup-header {
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.cable-popup-header h3,
+.pipeline-popup-header h3,
+.submarine-cable-popup-header h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.cable-popup-content,
+.pipeline-popup-content,
+.submarine-cable-popup-content {
+  padding: 12px 16px;
+}
+
+.cable-popup-row,
+.pipeline-popup-row,
+.submarine-cable-popup-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 0;
+}
+
+.cable-popup-label,
+.pipeline-popup-label,
+.submarine-cable-popup-label {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 14px;
+}
+
+.cable-popup-value,
+.pipeline-popup-value,
+.submarine-cable-popup-value {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* Ensure MapLibre popups use the custom styles */
+.maplibregl-popup-content {
+  padding: 0 !important;
+  background: none !important;
+  border-radius: 8px !important;
+  box-shadow: none !important;
+}
+
+.maplibregl-popup-tip {
+  border-top-color: rgba(34, 0, 67, 0.95) !important;
+}
